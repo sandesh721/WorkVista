@@ -1,0 +1,269 @@
+## **1. Requirements & Modules**
+
+### **Roles**
+
+* **Employee:** Log tasks, submit timesheets, view own project assignments.
+* **Manager:** Approve timesheets, assign projects/tasks, view team productivity.
+* **Admin:** Manage users, projects, system settings, reports.
+
+### **Core Features**
+
+1. **Task and Timesheet Logging**
+
+   * Employees log hours and tasks daily/weekly.
+2. **Project Assignment**
+
+   * Managers assign tasks to employees under projects.
+3. **Approval Workflow**
+
+   * Timesheets require manager approval.
+4. **Team Productivity Dashboard**
+
+   * Show per-project, per-employee productivity, total hours, overdue tasks.
+5. **Reports / PDF Export**
+
+   * Export individual or team timesheets as PDF.
+
+---
+
+## **2. Backend (Spring Boot)**
+
+### **Entities / Database Tables**
+
+1. **User**
+
+   * id, name, email, password, role, manager_id
+2. **Project**
+
+   * id, name, description, start_date, end_date, status
+3. **Task**
+
+   * id, project_id, name, description, assigned_to (user_id), status, priority
+4. **Timesheet**
+
+   * id, task_id, user_id, date, hours, description, status (pending/approved/rejected)
+5. **Approval**
+
+   * id, timesheet_id, manager_id, status, comments
+6. Optional:
+
+   * **Role**, **Notifications**, **Audit Logs**
+
+### **Backend Features**
+
+* **Authentication & Authorization**
+
+  * Spring Security + JWT tokens
+* **CRUD APIs**
+
+  * Users, Projects, Tasks, Timesheets
+* **Approval Workflow**
+
+  * Manager endpoint to approve/reject timesheets
+* **Reporting**
+
+  * Generate timesheet reports (PDF using libraries like **iText** or **Apache PDFBox**)
+* **Dashboard APIs**
+
+  * Aggregate queries for productivity metrics
+
+### **Suggested Structure**
+
+```
+com.company.project
+ ├─ controller
+ ├─ service
+ ├─ repository
+ ├─ model
+ ├─ dto
+ ├─ security
+ └─ util
+```
+
+---
+
+## **3. Frontend (React)**
+
+### **Pages / Components**
+
+* **Login / Registration**
+* **Dashboard**
+
+  * Employee: My tasks, timesheet summary
+  * Manager: Team summary, pending approvals
+  * Admin: System overview
+* **Projects**
+
+  * List of projects, assigned employees
+* **Tasks**
+
+  * Employee: My tasks
+  * Manager: Assign tasks
+* **Timesheet**
+
+  * Log daily hours
+  * Submit for approval
+  * Export PDF
+* **Reports**
+
+  * Filter by project/employee/date
+
+### **Libraries / Tools**
+
+* **React Router:** For page navigation
+* **Axios / Fetch:** For API calls
+* **Material-UI / Ant Design / Tailwind:** For UI components
+* **React-PDF / jsPDF:** For PDF export
+
+---
+
+## **4. Database (MySQL)**
+
+* Normalized tables: `users`, `projects`, `tasks`, `timesheets`, `approvals`
+* Relations:
+
+  * One-to-Many: `Project -> Tasks`, `User -> Timesheets`, `Manager -> Users`
+  * Many-to-One: `Task -> Assigned User`, `Timesheet -> Task`
+
+---
+
+## **5. Workflow**
+
+### **Employee**
+
+1. Login → View assigned projects/tasks
+2. Fill timesheet → Submit → Status = "Pending"
+
+### **Manager**
+
+1. Login → View team tasks and timesheets
+2. Approve/reject timesheets → Status updated
+
+### **Admin**
+
+1. Login → Create users/projects → Assign managers → Monitor dashboards
+
+---
+
+## **6. Implementation Phases**
+
+**Phase 1: Backend**
+
+* Setup Spring Boot project
+* Design MySQL schema
+* Implement User & Role authentication
+* CRUD for Projects & Tasks
+
+**Phase 2: Timesheet & Approval**
+
+* Timesheet logging APIs
+* Manager approval workflow
+* Basic validation
+
+**Phase 3: Frontend**
+
+* React app setup
+* Login/authentication
+* Dashboard with tasks, timesheets
+* CRUD forms for projects & tasks
+
+**Phase 4: Reporting & PDF Export**
+
+* Backend PDF generation API
+* Frontend button to download/export
+
+**Phase 5: Dashboard / Analytics**
+
+* Aggregated queries for productivity metrics
+* Charts (e.g., Chart.js, Recharts)
+
+**Phase 6: Polish**
+
+* Validation, UI/UX, error handling, notifications
+* Security hardening (Spring Security)
+
+---
+
+## **7. Tech Stack Summary**
+
+| Layer           | Technology                                                         |
+| --------------- | ------------------------------------------------------------------ |
+| Backend         | Spring Boot, Spring Data JPA, Spring Security, JWT, iText / PDFBox |
+| Frontend        | React, Axios, Material-UI / Ant Design / Tailwind, React-PDF       |
+| Database        | MySQL                                                              |
+| Build / Tooling | Maven/Gradle, Node.js, npm/yarn                                    |
+
+---
+
+✅ **Pro Tips**
+
+* Use **DTOs** in backend for decoupling API from entities
+* Use **Role-based access control** for security
+* Keep timesheet approval atomic (transaction) to avoid inconsistent states
+* Consider **pagination** and **filtering** for tasks & timesheets
+* Use **Spring Boot DevTools** for fast backend reload
+
+
+
+
+
+********************************************************************
+---
+
+## **1. Employee**
+
+**Main Purpose:** Log work, view tasks, submit timesheets.
+
+**Permissions / Actions:**
+
+* View assigned **projects** and **tasks**
+* Log **daily/weekly timesheets**
+* Submit **timesheets for approval**
+* View **status of submitted timesheets** (pending/approved/rejected)
+* Export own **timesheet as PDF**
+* Update personal profile (name, email, password)
+
+---
+
+## **2. Manager**
+
+**Main Purpose:** Manage team tasks, approve work, monitor productivity.
+
+**Permissions / Actions:**
+
+* View **team members** and their tasks
+* Assign **projects and tasks** to employees
+* Review **submitted timesheets** from team members
+* Approve or reject **timesheets**
+* Add **comments/feedback** on timesheets
+* View **team productivity dashboard**
+* Export **team timesheets / reports as PDF**
+* Track project progress and task completion
+
+---
+
+## **3. Admin**
+
+**Main Purpose:** Manage the system and overall data.
+
+**Permissions / Actions:**
+
+* Create / update / delete **users** (employee or manager)
+* Assign **roles** and **managers**
+* Create / update / delete **projects**
+* View all **tasks, timesheets, and reports**
+* View overall **system dashboard**
+* Configure **system settings** (optional)
+* Export any **timesheet or report as PDF**
+
+---
+
+### **Summary Table**
+
+| Role     | Can View                                     | Can Edit / Submit              | Can Approve | Can Export PDF |
+| -------- | -------------------------------------------- | ------------------------------ | ----------- | -------------- |
+| Employee | Own tasks, projects, timesheets              | Log timesheet, update profile  | ❌           | ✅ Own          |
+| Manager  | Team tasks, projects, timesheets, dashboards | Assign tasks, provide feedback | ✅ Team      | ✅ Team         |
+| Admin    | All data, dashboards                         | Manage users/projects          | Optional    | ✅ All          |
+
+
