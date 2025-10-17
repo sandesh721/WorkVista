@@ -1,10 +1,8 @@
 package com.task.WorkVista.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -23,17 +21,28 @@ public class User {
     private String password;
 
     @Enumerated(EnumType.STRING)
-    private Role role; // EMPLOYEE, MANAGER, ADMIN
+    private Role role;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "manager_id")
-    @JsonBackReference
+    @JsonIgnore
     private User manager;
 
+    @OneToMany(mappedBy = "manager", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<User> team = new ArrayList<>();
 
-    @OneToMany(mappedBy = "manager")
-    @JsonManagedReference
-    private List<User> team; // Employees reporting to this manager
+    public User(String name, String email, String password, Role role, User manager, List<User> team) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.manager = manager;
+        this.team = team;
+    }
+
+    public User() {
+    }
 
     public Long getId() {
         return id;
@@ -89,5 +98,15 @@ public class User {
 
     public void setTeam(List<User> team) {
         this.team = team;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", role=" + role +
+                '}';
     }
 }

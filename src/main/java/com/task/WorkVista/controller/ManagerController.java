@@ -1,10 +1,7 @@
 package com.task.WorkVista.controller;
 
-import com.task.WorkVista.dto.ManagerDashboardDTO;
-import com.task.WorkVista.entity.Task;
-import com.task.WorkVista.entity.Timesheet;
+import com.task.WorkVista.dto.*;
 import com.task.WorkVista.entity.User;
-import com.task.WorkVista.entity.Approval;
 import com.task.WorkVista.service.TaskService;
 import com.task.WorkVista.service.TimesheetService;
 import com.task.WorkVista.service.UserService;
@@ -14,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/manager")
@@ -36,31 +34,37 @@ public class ManagerController {
      * ✅ Get all employees under a specific manager
      */
     @GetMapping("/team/{managerId}")
-    public List<User> getTeamByManager(@PathVariable Long managerId) {
-        return userService.getUsersByManager(managerId);
+    public List<UserDetailDTO> getTeamByManager(@PathVariable Long managerId) {
+        return userService.getUsersByManager(managerId).stream()
+                .map(UserWrapper::toDetailDTO)
+                .collect(Collectors.toList());
     }
 
     /**
-     * ✅ Get all tasks assigned under this manager’s projects
+     * ✅ Get all tasks assigned under this manager's projects
      */
     @GetMapping("/tasks/{managerId}")
-    public List<Task> getTasksByManager(@PathVariable Long managerId) {
-        return taskService.getTasksByManager(managerId);
+    public List<TaskDTO> getTasksByManager(@PathVariable Long managerId) {
+        return taskService.getTasksByManager(managerId).stream()
+                .map(TaskWrapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     /**
      * ✅ Get all pending approvals (for manager)
      */
     @GetMapping("/approvals/{managerId}/pending")
-    public List<Approval> getPendingApprovals(@PathVariable Long managerId) {
-        return approvalService.getPendingApprovalsForManager(managerId);
+    public List<ApprovalDTO> getPendingApprovals(@PathVariable Long managerId) {
+        return approvalService.getPendingApprovalsForManager(managerId).stream()
+                .map(ApprovalWrapper::toDTO)
+                .collect(Collectors.toList());
     }
 
     /**
      * ✅ Get timesheets submitted by employees under this manager
      */
     @GetMapping("/timesheets/{managerId}")
-    public List<Timesheet> getTeamTimesheets(@PathVariable Long managerId) {
+    public List<TimesheetDTO> getTeamTimesheets(@PathVariable Long managerId) {
         return timesheetService.getTimesheetsByManager(managerId);
     }
 
@@ -75,6 +79,4 @@ public class ManagerController {
 
         return new ManagerDashboardDTO(totalTeamMembers, totalTasks, pendingApprovals);
     }
-
 }
-

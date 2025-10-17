@@ -1,6 +1,9 @@
 package com.task.WorkVista.dto;
 
 
+import lombok.Getter;
+
+@Getter
 public class ManagerDashboardDTO {
     private int totalTeamMembers;
     private int totalTasks;
@@ -12,16 +15,5 @@ public class ManagerDashboardDTO {
         this.pendingApprovals = pendingApprovals;
     }
 
-    public int getTotalTeamMembers() {
-        return totalTeamMembers;
-    }
-
-    public int getTotalTasks() {
-        return totalTasks;
-    }
-
-    public int getPendingApprovals() {
-        return pendingApprovals;
-    }
 }
 

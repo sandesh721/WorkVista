@@ -1,5 +1,8 @@
 package com.task.WorkVista.controller;
 
+import com.task.WorkVista.dto.ProjectCreateDTO;
+import com.task.WorkVista.dto.ProjectDTO;
+import com.task.WorkVista.dto.ProjectWrapper;
 import com.task.WorkVista.entity.Project;
 import com.task.WorkVista.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,29 +14,30 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/projects")
-//@CrossOrigin(origins = "http://localhost:5173")
 public class ProjectController {
 
     @Autowired
     private ProjectService projectService;
 
     @PostMapping
-    public Project createProject(@RequestBody Project project) {
-        return projectService.saveProject(project);
+    public ProjectDTO createProject(@RequestBody ProjectCreateDTO projectCreateDTO) {
+        System.out.println("Creating project with manager ID: " + projectCreateDTO.getManagerId());
+        return projectService.createProject(projectCreateDTO);
     }
 
     @GetMapping
-    public List<Project> getAllProjects() {
+    public List<ProjectDTO> getAllProjects() {
         return projectService.getAllProjects();
     }
 
     @GetMapping("/{id}")
-    public Optional<Project> getProjectById(@PathVariable Long id) {
+    public Optional<ProjectDTO> getProjectById(@PathVariable Long id) {
         return projectService.getProjectById(id);
     }
+
     @PutMapping("/{id}")
-    public Project updateProject(@PathVariable Long id, @RequestBody Project updatedProject) {
-        return projectService.updateProject(id, updatedProject);
+    public ProjectDTO updateProject(@PathVariable Long id, @RequestBody ProjectCreateDTO projectUpdateDTO) {
+        return projectService.updateProjectFromDTO(id, projectUpdateDTO);
     }
 
     @PatchMapping("{projectId}")
@@ -43,6 +47,7 @@ public class ProjectController {
         projectService.statusPatch(projectId, updates);
         return ResponseEntity.ok("Project Status Updated");
     }
+
     @DeleteMapping("/{id}")
     public void deleteProject(@PathVariable Long id) {
         projectService.deleteProject(id);

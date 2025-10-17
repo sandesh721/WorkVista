@@ -38,6 +38,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<String> createUser(@RequestBody User user) {
+        System.out.println(user);
         User savedUser = userService.saveUser(user);
         return  ResponseEntity.ok("User created Successfully");
     }
